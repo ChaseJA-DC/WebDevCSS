@@ -1,0 +1,42 @@
+{
+
+  "users": [
+    {
+      "DisplayName": "John Doe",
+      "EmailAddress": "j@doe.com",
+      "Username" : "johndoe",
+        "Password" : "123456"
+
+    },
+    {
+      "DisplayName": "Jeffery Jone",
+      "EmailAddress": "123123123@doe.com",
+      "Username" : "jefferyjone",
+      "Password" : "6464546456"
+
+    },
+    {
+      "DisplayName": "Admin",
+      "EmailAddress": "admin@exmaple.com",
+      "Username" : "admin",
+      "Password" : "password"
+
+    }
+
+  ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
