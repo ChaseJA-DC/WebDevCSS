@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Portfolio</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Sergio Santilli">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+
+    <!-- CSS Section -->
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.css">
+    <link rel="stylesheet" href="./content/app.css">
+    <link rel="stylesheet" href="./content/style.css">
+
+</head>
+<video id="background-video" autoplay loop muted poster="https://assets.codepen.io/6093409/river.jpg">
+    <source src="media/tree.mp4" type="video/mp4">
+</video>
+<body class="bg-dark project-body background1">
+
+<header id="header">
+    <nav class="navbar navbar-expand-lg navbar-main">
+        <div class="container-fluid">
+            <a class="navbar-brand text-center " href="index.html">Harmony Hub <i class="fa-solid fa-tree"></i></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="portfolio.html"><i class="fa-solid fa-wallet"></i> Portfolio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="service.html"><i class="fa-solid fa-shop"></i> Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="team.html"><i class="fa-solid fa-user-group"></i> Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="blog.html"><i class="fa-solid fa-quote-left"></i> Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gallery.html"><i class="fa-solid fa-camera"></i> Gallery</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="project-container">
+    <section id="portfolio">
+    </section>
+    <button class="LoadMoreBtn" id="loadMore"><i class="fa-solid fa-arrow-down"></i></button>
+    <div >
+        <div id="hidden-social"  style="display:none;">
+        </div>
+    </div>
+</main>
+<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="scripts/main.js"></script>
+
+</body>
+</html>

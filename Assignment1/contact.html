@@ -20,41 +20,33 @@
     <link rel="stylesheet" href="./content/style.css">
 
 </head>
-<body class="bg-dark" style="overflow: hidden; padding-top: 5%;">
+<body class="bg-dark" style="padding-top: 5%;">
 
-<header id="header">
-    <nav class="navbar navbar-expand-lg navbar-main">
-        <div class="container-fluid">
-            <a class="navbar-brand text-center " href="index.html">Harmony Hub <i class="fa-solid fa-tree"></i></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="portfolio.html"><i class="fa-solid fa-wallet"></i> Portfolio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="service.html"><i class="fa-solid fa-shop"></i> Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="team.html"><i class="fa-solid fa-user-group"></i> Team</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="blog.html"><i class="fa-solid fa-quote-left"></i> Blog</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+<header></header>
 
+<style>
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
 
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
 
-<main class=" container-lg text-center glass" style="height: 650px;">
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+
+<main class=" container-lg text-center glass3" style="height: 650px;">
     <div class="">
         <h1 class="container">Contact Us</h1>
 
@@ -93,11 +85,30 @@
                 <button id="submitButton" type="submit" class="btn btn-primary"><i class="fa-solid fa-envelope"></i> Submit</button>
                 <button id="cancelButton" type="reset" class="btn btn-warning"><i class="fa-solid fa-rotate-left"></i> Cancel</button>
             </form>
+            <a style="color:white;" href="feedback.html">Have you enjoyed our service? Leave us some feedback!</a>
             <p class="container">
                 Chase Allen - chase.allen@dcmail.ca - (905)-555-0099 - 1234 Fake Address Street, Ontario, Canada
             </p>
 
         </div>
+        <div style="color:white;"class="row justify-content-lg-center g-3">
+            <h2>Feedback</h2>
+                <form id="feedbackForm" class="col-lg-6 col-md-5 col-sm-4">
+                <label for="rating">Rate your experience:</label>
+                <select name="rating" id="rating">
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="average">Average</option>
+                    <option value="poor">Poor</option>
+                    <option value="terrible">Terrible</option>
+                </select>
+
+                <textarea id="comments" name="comments" rows="4" cols="50"></textarea>
+                    <br>
+                    <button type="button" id="submitFeedback" class="btn btn-primary"><i class="fa-solid fa-envelope"></i> Submit</button>
+            </form>
+        </div>
+
 
     </div>
 </main>

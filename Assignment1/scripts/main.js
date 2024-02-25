@@ -29,7 +29,29 @@ function textSlider() {
         }, 1000);
     }
 }
-
+function loadEvents() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '../data/events.json', true);
+    xhr.onload = function() {
+        if (this.status === 200) {
+            const events = JSON.parse(this.responseText);
+            let output = '';
+            events.forEach(function(event) {
+                output += `
+                    <li>
+                        <h3>${event.name}</h3>
+                        <p>Date: ${event.date}</p>
+                        <p>Location: ${event.location}</p>
+                    </li>
+                `;
+            });
+            document.getElementById('eventsList').innerHTML = output;
+        } else {
+            console.error('Could not load events');
+        }
+    };
+    xhr.send();
+}
 /**
  * Function Name: createFooterNav
  * Description: Creates and appends a footer navigation element to the body.
@@ -78,6 +100,47 @@ function textSlider() {
         if (blogLink) {
             blogLink.innerHTML = '<i class="fa-solid fa-newspaper"></i> News';
         }
+
+        // Check if the user is signed in and update the navbar link accordingly
+        const userLoggedIn = sessionStorage.getItem("user");
+        if (userLoggedIn) {
+            // Create the 'Logout' link element
+            const logoutLink = document.createElement('li');
+            logoutLink.className = 'nav-item';
+            logoutLink.innerHTML = '<a class="nav-link" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>';
+
+            // Add click event listener to logout link
+            logoutLink.addEventListener('click', () => {
+                // Clear user session
+                sessionStorage.clear();
+                // Redirect to login page after logout
+                location.href = "login.html";
+            });
+
+            // Append the 'Logout' link to the navbar
+            navbar.appendChild(logoutLink);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Locate the navbar
+        const navbar = document.querySelector('.navbar-nav');
+
+        // Create the logout link element
+        const logoutLink = document.createElement('li');
+        logoutLink.className = 'nav-item';
+        logoutLink.innerHTML = '<a class="nav-link" href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>';
+
+        // Add click event listener to logout link
+        logoutLink.addEventListener('click', () => {
+            // Clear user session
+            sessionStorage.clear();
+            // Redirect to login page after logout
+            location.href = "login.html";
+        });
+
+        // Append the logout link to the navbar
+        navbar.appendChild(logoutLink);
     });
 
     /**
@@ -249,10 +312,7 @@ function textSlider() {
     }
 
 
-    document.getElementById("loadMore").addEventListener("click", loadProjects);
 
-    // Initial load
-    loadProjects();
     function DisplayHomePage() {
         console.log("Called DisplayHomePage()");
         let ExploreBtn = document.getElementById("ExploreBtn");
@@ -260,7 +320,10 @@ function textSlider() {
 
 
     }
-
+    function DisplayGalleryPage(){
+        console.log("Gallery Page Function Called");
+        LightBox();
+    }
 
     function DisplayProductPage(){
         console.log("Called DisplayProductPage()");
@@ -285,8 +348,8 @@ function textSlider() {
             if(subscribeCheckbox.checked){
                 let contact = new Contact(fullName.value, contactNumber.value, emailAddress.value);
                 if(contact.serialize()){
-                   let key = contact.fullName.substring(0,1) + Date.now();
-                   localStorage.setItem(key, contact.serialize());
+                    let key = contact.fullName.substring(0,1) + Date.now();
+                    localStorage.setItem(key, contact.serialize());
                 }
             }
 
@@ -322,7 +385,74 @@ function textSlider() {
     }
 
     // Main function to determine which page to display based on document title
+    // Function to set up the Lightbox feature
+    function initializeLightbox() {
+        const lightbox = document.createElement('div');
+        lightbox.id = 'lightbox';
+        document.body.appendChild(lightbox);
 
+        // Use a more specific selector if needed to only target gallery images
+        const images = document.querySelectorAll('img');
+        images.forEach(image => {
+            image.addEventListener('click', e => {
+                lightbox.classList.add('active');
+                const img = document.createElement('img');
+                img.src = image.src;
+                while (lightbox.firstChild) {
+                    lightbox.removeChild(lightbox.firstChild);
+                }
+                lightbox.appendChild(img);
+            });
+        });
+
+        lightbox.addEventListener('click', e => {
+            if (e.target !== e.currentTarget) return;
+            lightbox.classList.remove('active');
+        });
+    }
+    function DisplayLoginPage(){
+        console.log("Called DisplayLoginPage()");
+
+        let messageArea = $("#messageArea").hide();
+
+        $("#loginButton").on("click", function(){
+            let success = false;
+            let newUser = new core.User();
+
+            let username = $("#username").val(); // Make sure the ID is correct
+            let password = $("#password").val(); // Make sure the ID is correct
+
+            $.get("./data/users.json", function(data){
+                for (const user of data.users){
+                    console.log(user);
+                    // Ensure property names match the case in your JSON
+                    if(username === user.Username && password === user.Password){
+                        newUser.fromJSON(user);
+                        success = true;
+                        sessionStorage.setItem("username", username);
+                        break;
+                    }
+                }
+
+                if(success){
+                    sessionStorage.setItem("user", newUser.serialize());
+                    messageArea.removeAttr("class").hide();
+                    location.href = "index.html";
+                }else{
+                    $("#username").trigger("focus").trigger("select");
+                    messageArea.addClass("alert alert-danger").text("Error: Invalid login information").show();
+                }
+            });
+        });
+
+        $("#cancelButton").on("click", function(){
+
+            document.form[0].reset();
+            location.href = "index.html";
+
+        });
+
+    }
     function Start(){
         console.log("App Started");
         // Switch statement to call the appropriate display function
@@ -346,6 +476,15 @@ function textSlider() {
             case "Contact Us":
                 DisplayContactUsPage();
                 break;
+            case "Gallery":
+                initializeLightbox();
+                break;
+            case "Login":
+                DisplayLoginPage();
+                break;
+            case "Portfolio":
+                loadProjects();
+                break;
         }
 
 
@@ -355,3 +494,436 @@ function textSlider() {
 
 
 })()
+
+// App.js content integrated below
+"use strict";
+
+(function(){
+
+    function CheckLogin() {
+        const navbar = document.querySelector('.navbar-nav');
+        const welcomeMessage = document.getElementById("welcomeMessage");
+
+        if (sessionStorage.getItem("user")) {
+            // User is logged in, update navigation bar
+            navbar.innerHTML = `
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="portfolio.html"><i class="fa-solid fa-wallet"></i> Portfolio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="service.html"><i class="fa-solid fa-shop"></i> Services</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="team.html"><i class="fa-solid fa-user-group"></i> Team</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="blog.html"><i class="fa-solid fa-blog"></i> Blog</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gallery.html"><i class="fa-solid fa-camera"></i> Gallery</a>
+            </li>
+            <li class="nav-item">
+                    <a class="nav-link" href="quote.html"><i class="fa-solid fa-quote-left"></i></i> Quote</a>
+            </li>
+            <li class="nav-item" id="login">
+                <a class="nav-link" href="#"><i class="fa-solid fa-sign-in-alt"></i> Logout</a>
+            </li>
+        `;
+            // Add click event listener to logout link
+            const logoutLink = document.querySelector('#login');
+            logoutLink.addEventListener('click', () => {
+                // Clear user session
+                sessionStorage.clear();
+                // Redirect to login page after logout
+                location.href = "login.html";
+            });
+
+            // Display welcome message with the user's name
+            const username = sessionStorage.getItem("username");
+            if (username) {
+                welcomeMessage.textContent = `Welcome, ${username}!`;
+            }
+        } else {
+            // User is not logged in, update navigation bar
+            navbar.innerHTML = `
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="portfolio.html"><i class="fa-solid fa-wallet"></i> Portfolio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="service.html"><i class="fa-solid fa-shop"></i> Services</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="team.html"><i class="fa-solid fa-user-group"></i> Team</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="blog.html"><i class="fa-solid fa-blog"></i> Blog</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gallery.html"><i class="fa-solid fa-camera"></i> Gallery</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="quote.html"><i class="fa-solid fa-quote-left"></i> Quote</a>
+            </li>
+            <li class="nav-item" id="login">
+                <a class="nav-link" href="login.html"><i class="fa-solid fa-sign-in-alt"></i> Login</a>
+            </li>
+        `;
+
+            // Clear welcome message
+            welcomeMessage.textContent = "";
+        }
+    }
+    function filterEvents() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0]; // Assuming you want to search by the first column
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+
+    window.addEventListener("load", () => {
+        CheckLogin();
+    });
+
+    window.addEventListener("load", () => {
+        CheckLogin();
+    });
+
+
+    function LoadHeader(html_data) {
+        $("header").html(html_data);
+        $('li>a:contains(${document.title})').addClass("active")
+        CheckLogin();
+    }
+
+    function AjaxRequest(method, url, callback){
+        let xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.addEventListener("readystatechange", () => {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+                if (typeof callback == "function") {
+                    callback(xhr.responseText);
+                } else {
+                    console.error("Callback is not a function");
+                }
+            }
+        });
+        xhr.send();
+    }
+
+
+
+    function DisplayHomePage(){
+        console.log("Called DisplayHomePage()");
+
+    }
+
+    function DisplayProductPage(){
+        console.log("Called DisplayProductPage()");
+    }
+
+    function DisplayAboutUsPage(){
+        console.log("Called DisplayAboutUsPage()");
+    }
+
+    function DisplayServicePage(){
+        console.log("Called DisplayServicePage()");
+    }
+
+
+    function DisplayRegisterPage(){
+        console.log("Called DisplayRegisterPage()");
+
+        let sendButton = document.getElementById("submitButton");
+
+        sendButton.addEventListener("click", function (event){
+            event.preventDefault(); // Prevent the form from submitting until validation is complete
+
+            if(RegisterFormValidation()) {
+                // If form is valid, proceed with submission logic here
+                console.log("Form is valid, proceed with submission.");
+            } else {
+                console.log("Form validation failed, please correct the errors.");
+            }
+        });
+    }
+
+    function ValidateField(input_field_id, regular_expression, error_message) {
+        let messageArea = $("#messageArea").hide();
+
+        $(input_field_id).on("blur", function() {
+            let inputFieldText = $(this).val();
+            if (!regular_expression.test(inputFieldText)) {
+                $(this).trigger("focus").trigger("select");
+                messageArea.addClass("alert alert-danger").text(error_message).show();
+            } else {
+                messageArea.removeAttr("class").hide();
+            }
+        });
+    }
+
+
+    function DisplayContactListPage(){
+        console.log("Called DisplayContactListPage()");
+
+        if(localStorage.length > 0){
+
+            let contactList = document.getElementById("contactList");
+            let data = "";
+
+            let keys = Object.keys(localStorage);
+            let index = 1;
+
+            for(const key of keys){
+                let contactData = localStorage.getItem(key);
+                let contact = new core.Contact(); // Ensure this is the correct way to instantiate your Contact class
+                contact.deserialize(contactData);
+                data += `<tr>
+                        <th scope="row" class="text-center">${index}</th>
+                        <td>${contact.fullName}</td>
+                        <td>${contact.contactNumber}</td>
+                        <td>${contact.emailAddress}</td>
+                        <td>
+                            <button class="btn btn-primary edit-btn" data-key="${key}"><i class="fas fa-edit"></i> Edit</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger delete-btn" data-key="${key}"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </td>
+                    </tr>`;
+                index++;
+            }
+            contactList.innerHTML = data;
+
+            // Add click event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    let key = this.getAttribute('data-key');
+                    // Navigate to edit page with key as query parameter
+                    window.location.href = `edit.html?edit=${key}`;
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    let key = this.getAttribute('data-key');
+                    // Confirm before deleting
+                    if(confirm('Are you sure you want to delete this contact?')) {
+                        localStorage.removeItem(key);
+                        // Refresh the contact list to reflect the deletion
+                        DisplayContactListPage();
+                    }
+                });
+            });
+        } else {
+            contactList.innerHTML = "<tr><td colspan='6' class='text-center'>No contacts found</td></tr>";
+        }
+    }
+    function DisplayEventsPage() {
+        console.log("Called DisplayEventsPage()");
+        loadEvents();
+        filterEvents();
+        searchEvents();
+    }
+    // Define a JavaScript function to handle form data processing
+    function processFormData(formData) {
+        // Example: Log the form data to the console
+        console.log("Form Data:", formData);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Event listener for the feedback form submission
+        document.getElementById("submitFeedback").addEventListener("click", function() {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Gather the form data
+            var formData = {
+                rating: document.getElementById("rating").value,
+                comments: document.getElementById("comments").value
+            };
+
+            // Call the JavaScript function to process the form data
+            processFormData(formData);
+        });
+    });
+    function DisplayEditPage() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const contactKey = urlParams.get('edit');
+
+        if (contactKey) {
+            let contactData = localStorage.getItem(contactKey);
+            let contact = new core.Contact(); // Access the Contact class using core.Contact
+            contact.deserialize(contactData); // Ensure you have a method to parse the string back to a Contact object
+
+            // Populate form fields
+            document.getElementById('fullName').value = contact.
+                fullName;
+            document.getElementById('contactNumber').value = contact.contactNumber;
+            document.getElementById('emailAddress').value = contact.emailAddress;
+
+            // Listen for form submission
+            document.getElementById('contact-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Update contact details based on form input
+                contact.fullName = document.getElementById('fullName').value;
+                contact.contactNumber = document.getElementById('contactNumber').value;
+                contact.emailAddress = document.getElementById('emailAddress').value;
+
+                // Serialize and save updated contact back to localStorage
+                localStorage.setItem(contactKey, contact.serialize());
+
+                // Redirect to contact list page
+                window.location.href = 'contact-list.html';
+            });
+        }
+    }
+    function RegisterFormValidation() {
+        // Validate First Name and Last Name
+        ValidateField("#FirstName", /^[A-Za-z\s]+$/, "Please enter a valid first name");
+        ValidateField("#lastName", /^[A-Za-z\s]+$/, "Please enter a valid last name");
+
+        // Validate Email Address
+        ValidateField("#emailAddress", /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,10}$/, "Please enter a valid email address");
+
+        // Validate Password (assuming a general strong password requirement here)
+        ValidateField("#password", /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, "Password must be at least 8 characters long and contain at least one letter and one number");
+
+        // Confirm Password (this validation would compare the values of password and confirmPassword fields directly)
+        ValidateField("#confirmPassword", function(value) {
+            return value === $('#password').val();
+        }, "Passwords must match");
+
+        // Validate Address (basic non-empty validation, can be expanded based on specific requirements)
+        ValidateField("#address", /.+/, "Please enter your address");
+
+        // Validate Phone Number
+        ValidateField("#phoneNumber", /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/, "Please enter a valid phone number in the format: 123-456-7890");
+    }
+    function DisplayLoginPage(){
+        console.log("Called DisplayLoginPage()");
+
+        let messageArea = $("#messageArea").hide();
+
+        $("#loginButton").on("click", function(){
+            let success = false;
+            let newUser = new core.User();
+
+            let username = $("#username").val(); // Make sure the ID is correct
+            let password = $("#password").val(); // Make sure the ID is correct
+
+            $.get("./data/users.json", function(data){
+                for (const user of data.users){
+                    console.log(user);
+                    // Ensure property names match the case in your JSON
+                    if(username === user.Username && password === user.Password){
+                        newUser.fromJSON(user);
+                        success = true;
+                        break;
+                    }
+                }
+
+                if(success){
+                    sessionStorage.setItem("user", newUser.serialize());
+                    messageArea.removeAttr("class").hide();
+                    location.href = "index.html";
+                }else{
+                    $("#username").trigger("focus").trigger("select");
+                    messageArea.addClass("alert alert-danger").text("Error: Invalid login information").show();
+                }
+            });
+        });
+
+        $("#cancelButton").on("click", function(){
+
+            document.form[0].reset();
+            location.href = "index.html";
+
+        });
+
+    }
+    function enforceLogin() {
+        // Assuming your login page's title is "Login"
+        if (!sessionStorage.getItem("user") && document.title !== "Login") {
+            // Redirect the user to the login page if not logged in and not already on the login page
+            location.href = "login.html";
+        }
+    }
+    function Start(){
+        console.log("App Started");
+        enforceLogin();
+        AjaxRequest("GET","header.html",LoadHeader);
+        CheckLogin();
+
+        const username = sessionStorage.getItem("username");
+
+        switch(document.title){
+            case "Home":
+                DisplayHomePage();
+                break;
+            case "Our Products":
+                DisplayProductPage();
+                break;
+            case "About Us":
+                DisplayAboutUsPage();
+                break;
+            case "Our Services":
+                DisplayServicePage();
+                break;
+            case "Contact List":
+                DisplayContactListPage();
+                break;
+            case "Contact Us":
+                break;
+            case "Login":
+                DisplayLoginPage();
+                break;
+            case "Edit":
+                DisplayEditPage();
+                break;
+            case "Register":
+                DisplayRegisterPage();
+                RegisterFormValidation();
+                break;
+            case "Events":
+                DisplayEventsPage();
+                break;
+        }
+        // Display welcome message with the user's name
+        const welcomeMessage = document.getElementById("welcomeMessage");
+        if (username) {
+            welcomeMessage.textContent = `Welcome, ${username}!`;
+        }
+
+    }
+    window.addEventListener("load", Start);
+
+})()
+

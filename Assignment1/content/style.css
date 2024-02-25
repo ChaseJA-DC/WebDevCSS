@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:700|Roboto:300,700');
+
 html, body {
     height: 100%;
 }
@@ -168,6 +170,7 @@ h1 {
 
 #hidden-social-info {
     animation: 1s slide-left;
+    padding-top: 10px;
 }
 
 @keyframes slide-right {
@@ -230,7 +233,7 @@ h1 {
     align-items: center; /* Center children horizontally */
     justify-content: center; /* Center children vertically if there's height */
     text-align: center; /* Center text for inline or inline-block elements */
-
+    padding-top: 100px;
 }
 .card {
     /* Add shadows to create the "card" effect */
@@ -266,6 +269,15 @@ h1 {
     backdrop-filter: blur(3.2px);
     -webkit-backdrop-filter: blur(3.2px);
     padding: 10px;
+}
+.glass3 {
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3.2px);
+    -webkit-backdrop-filter: blur(3.2px);
+    padding: 40px;
+    overflow-y:auto;
 }
 #portfolio {
     display: flex;
@@ -796,3 +808,34 @@ ul.social li a {
 }
 .footer-nav .nav-link{color: #fff; /* Change font color to white */
     transition: all 0.3s ease; /* Add a smooth transition effect */}
+
+.gallery-container{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 8%;
+}
+.gallery{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Creates a 3-column grid */
+    grid-gap: 20px;
+}
+
+.gallery img{
+    width: 100%;
+
+}
+.welcome {
+    color: white;
+    text-align: center;
+}
+.table {
+    background: rgba(255, 255, 255, 0.11);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3.2px);
+    -webkit-backdrop-filter: blur(3.2px);
+    width: 100%;
+}
