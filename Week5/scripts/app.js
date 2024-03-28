@@ -238,7 +238,7 @@
         $("#cancelButton").on("click", function(){
 
             document.form[0].reset();
-            location.href = "index.html";
+            location.href = "index.ejs";
 
         });
 

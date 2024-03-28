@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Redirect after 5 seconds
         setTimeout(function() {
-            window.location.href = 'index.html'; // Replace with your home page URL
+            window.location.href = 'index.ejs'; // Replace with your home page URL
         }, 5000);
     });
 });

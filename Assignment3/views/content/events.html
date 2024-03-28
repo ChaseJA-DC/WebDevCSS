@@ -1,0 +1,89 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script defer src="../../scripts/lightbox.js"></script>
+
+<main>
+    <br>
+    <br>
+    <br>
+    <script>
+        function searchEvents() {
+            var input, filter, resultsDiv, events;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            resultsDiv = document.getElementById("searchResults");
+
+            // Fetch the events data (assuming it's stored in events.json)
+            fetch('../data/events.json')
+                .then(response => response.json())
+                .then(data => {
+                    events = data.filter(event => event.name.toUpperCase().includes(filter));
+
+                    // Clear previous results
+                    resultsDiv.innerHTML = '';
+
+                    // Check if there are any matching events
+                    if (events.length) {
+                        // Loop through the filtered events and display them
+                        events.forEach(event => {
+                            var eventDiv = document.createElement("div");
+                            eventDiv.innerHTML = `<strong>${event.name}</strong> - ${event.date} at ${event.location}`;
+                            resultsDiv.appendChild(eventDiv);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = 'No events found.';
+                    }
+                });
+        }
+    </script>
+    <input type="text" id="searchInput" placeholder="Search for events...">
+    <button onclick="searchEvents()" class="btn btn-primary">Search</button>
+
+
+    <table class="table table-responsive-sm table-bordered table-dark ">
+        <tr  class="bg-info">
+            <th>Event</th>
+            <th>Date</th>
+            <th>Location</th>
+        </tr>
+
+        <tbody id="myTable" class="glass">
+
+        </tbody>
+    </table>
+    <div class="container-sm glass" style="text-align: center">
+        <h5 style="color:white;">Search Results</h5>
+        <div id="searchResults" style="color: white;"></div>
+    </div>
+
+    <script>
+        var myArray = []
+
+        $.ajax({
+            method: 'GET',
+            //Get json data from events.json
+            url: '../../data/events.json',
+            dataType: 'json', // Ensure the response is treated as JSON
+            success: function(response){
+                myArray = response; // Use the response directly
+                buildTable(myArray);
+                console.log(myArray);
+            }
+        });
+        function buildTable(data){
+            var table = document.getElementById('myTable')
+
+            for (var i = 0; i < data.length; i++){
+                var row = `<tr>
+							<td>${data[i].name}</td>
+							<td>${data[i].date}</td>
+							<td>${data[i].location}</td>
+					  </tr>`
+                table.innerHTML += row
+
+
+            }
+        }
+    </script>
+</main>
