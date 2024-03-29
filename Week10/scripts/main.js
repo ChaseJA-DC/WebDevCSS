@@ -801,7 +801,7 @@ function loadEvents() {
                 localStorage.setItem(contactKey, contact.serialize());
 
                 // Redirect to contact list page
-                window.location.href = 'contact-list.html';
+                window.location.href = 'eventplanner.html';
             });
         }
     }

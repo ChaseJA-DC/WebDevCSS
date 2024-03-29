@@ -192,7 +192,7 @@
                 localStorage.setItem(contactKey, contact.serialize());
 
                 // Redirect to contact list page
-                window.location.href = 'contact-list.html';
+                window.location.href = 'eventplanner.html';
             });
         }
     }
@@ -227,7 +227,7 @@
                 if(success){
                     sessionStorage.setItem("user", newUser.serialize());
                     messageArea.removeAttr("class").hide();
-                    location.href = "contact-list.html";
+                    location.href = "eventplanner.html";
                 }else{
                     $("#username").trigger("focus").trigger("select");
                     messageArea.addClass("alert alert-danger").text("Error: Invalid login information").show();
